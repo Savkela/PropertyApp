@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/savkela/property-app/initializers"
-	"github.com/savkela/property-app/models"
+	"ServerApp/entity"
+	"ServerApp/initializers"
 )
 
 func init() {
@@ -12,5 +12,5 @@ func init() {
 }
 
 func main() {
-	initializers.DB.AutoMigrate(&models.User{})
+	initializers.DB.AutoMigrate(&entity.User{})
 }

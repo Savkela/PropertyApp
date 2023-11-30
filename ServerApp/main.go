@@ -1,8 +1,16 @@
 package main
 
 import (
+	"ServerApp/controller"
+	"ServerApp/initializers"
+	"ServerApp/service"
+
 	"github.com/gin-gonic/gin"
-	"github.com/savkela/property-app/initializers"
+)
+
+var (
+	userService    service.UserService       = service.NewUserService()
+	userController controller.UserController = controller.NewUserController(userService)
 )
 
 func init() {
@@ -11,12 +19,23 @@ func init() {
 }
 
 func main() {
-	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
+	server := gin.New()
+
+	server.Use(gin.Recovery(), gin.Logger(), gin.BasicAuth(gin.Accounts{"savic": "nikola"}))
+
+	//users
+	server.GET("/users", func(ctx *gin.Context) {
+		ctx.JSON(200, userController.FindAll())
 	})
-	r.Run() // listen and serve on 0.0.0.0:8080
+
+	server.POST("/users", userController.Save)
+
+	server.GET("/users/:id", userController.FindOne)
+
+	server.PUT("/users/:id", userController.Update)
+
+	server.DELETE("/users/:id", userController.Delete)
+
+	server.Run()
 
 }
